@@ -1,0 +1,42 @@
+export const storeLocations = [
+  {
+    id: 1,
+    name: "Store Delhi Central",
+    state: "Delhi",
+    city: "New Delhi",
+    latitude: 28.6139,
+    longitude: 77.209,
+  },
+  {
+    id: 2,
+    name: "Store Delhi South",
+    state: "Delhi",
+    city: "New Delhi",
+    latitude: 28.5921,
+    longitude: 77.2271,
+  },
+  {
+    id: 3,
+    name: "Store Mumbai Central",
+    state: "Maharashtra",
+    city: "Mumbai",
+    latitude: 19.076,
+    longitude: 72.8777,
+  },
+  {
+    id: 4,
+    name: "Store Mumbai Bandra",
+    state: "Maharashtra",
+    city: "Mumbai",
+    latitude: 19.0596,
+    longitude: 72.8295,
+  },
+  {
+    id: 5,
+    name: "Store Bangalore MG Road",
+    state: "Karnataka",
+    city: "Bangalore",
+    latitude: 12.9716,
+    longitude: 77.6244,
+  },
+];
