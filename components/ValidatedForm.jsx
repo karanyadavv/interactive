@@ -9,6 +9,8 @@ const ValidatedForm = () => {
   });
 
   const [errors, setErrors] = useState({});
+  const [showPopup, setShowPopup] = useState(false);
+  const [submittedData, setSubmittedData] = useState(null);
 
   const validateField = (name, value) => {
     let error = '';
@@ -62,10 +64,15 @@ const ValidatedForm = () => {
     });
 
     if (Object.keys(newErrors).length === 0) {
-      alert(JSON.stringify(formData, null, 2));
+      setSubmittedData(formData); // Save the form data
+      setShowPopup(true); // Show the popup
     } else {
       setErrors(newErrors);
     }
+  };
+
+  const closePopup = () => {
+    setShowPopup(false); // Hide the popup
   };
 
   return (
@@ -141,6 +148,24 @@ const ValidatedForm = () => {
           </button>
         </form>
       </div>
+
+      {/* Popup modal */}
+      {showPopup && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded shadow-lg max-w-md w-full">
+            <h2 className="text-lg font-bold mb-4">Submitted Data</h2>
+            <pre className="text-sm bg-gray-100 p-4 rounded">
+              {JSON.stringify(submittedData, null, 2)}
+            </pre>
+            <button
+              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+              onClick={closePopup}
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
