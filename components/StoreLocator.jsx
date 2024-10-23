@@ -16,7 +16,6 @@ const StoreLocator = () => {
     const stateList = [...new Set(storeLocations.map(item => item.state))];
     setStates(stateList);
     
-   
     if (stateList.length > 0) {
       setSelectedState(stateList[0]);
     }
@@ -71,7 +70,7 @@ const StoreLocator = () => {
   };
 
   return (
-    <div className="">
+    <div className="flex flex-col">
       <div className="flex w-1/3 p-4 bg-gray-100">
         <select 
           value={selectedState} 
@@ -96,14 +95,16 @@ const StoreLocator = () => {
           ))}
         </select>
       </div>
-      <div className="">
-        <div className="">
+
+      <div className="flex">
+
+        <div className="w-1/3 p-4 overflow-y-auto">
           {stores.map(store => (
             <StoreCard key={store.id} store={store} />
           ))}
         </div>
-      
-        <div className="">
+        
+        <div className="w-2/3 p-4">
           <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
@@ -124,7 +125,6 @@ const StoreLocator = () => {
           </LoadScript>
         </div>
       </div>
-      
     </div>
   );
 };
