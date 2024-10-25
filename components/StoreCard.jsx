@@ -1,6 +1,14 @@
 import { Star, Clock, Phone, Navigation, Building2 } from 'lucide-react';
 
 const StoreCard = ({ store }) => {
+  const formatTime = (timeStr) => {
+    if (!timeStr) return '';
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const period = hours >= 12 ? 'PM' : 'AM';
+    const displayHours = hours % 12 || 12;
+    return `${displayHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+  };
+
   const isOpen = () => {
     const now = new Date();
     const day = now.getDay();
@@ -21,6 +29,13 @@ const StoreCard = ({ store }) => {
     const closeTimeNum = closeHour * 100 + closeMinute;
 
     return time >= openTimeNum && time <= closeTimeNum;
+  };
+
+  const getCurrentDayCloseTime = () => {
+    const now = new Date();
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const currentDay = days[now.getDay()];
+    return store?.dealerOperationHours?.[`${currentDay}CloseTime`];
   };
 
   if (!store) return null;
@@ -45,7 +60,12 @@ const StoreCard = ({ store }) => {
 
       <div className="flex items-center gap-2 mb-2 text-sm text-gray-600">
         <Clock className="w-4 h-4" />
-        <span>{isOpen() ? 'Open Now' : 'Closed'}</span>
+        <span>
+          {isOpen() ? 'Open Now' : 'Closed'}
+          {isOpen() && getCurrentDayCloseTime() && (
+            <span className="text-gray-500"> · Closes at {formatTime(getCurrentDayCloseTime())}</span>
+          )}
+        </span>
       </div>
 
       {store.phoneNumber && (
