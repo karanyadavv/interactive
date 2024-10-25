@@ -2,6 +2,8 @@ import { Routes, Route, Link } from 'react-router-dom';
 import StoreLocator from '../components/StoreLocator';
 import ValidatedForm from '../components/ValidatedForm';
 import './App.css';
+import storeData from '../src/data/re.json';
+
 
 function App() {
   return (
@@ -22,7 +24,7 @@ function App() {
       </nav>
 
       <Routes>
-        <Route path="/" element={<StoreLocator />} />
+        <Route path="/" element={<StoreLocator storeData={storeData} />} />
         <Route path="/form" element={<ValidatedForm />} />
       </Routes>
     </div>

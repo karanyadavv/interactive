@@ -158,7 +158,7 @@ const ValidatedForm = () => {
               {JSON.stringify(submittedData, null, 2)}
             </pre>
             <button
-              className="mt-4 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-700"
+              className="mt-4 bg-black text-white py-2 px-4 rounded hover:bg-gray-700"
               onClick={closePopup}
             >
               Close

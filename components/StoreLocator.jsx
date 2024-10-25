@@ -1,64 +1,63 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, Marker } from '@react-google-maps/api';
-import { storeLocations } from '../src/data/storeLocation.js';
 import StoreCard from './StoreCard.jsx';
 
 
-const StoreLocator = () => {
+const StoreLocator = ({ storeData }) => {
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   const [stores, setStores] = useState([]);
   const [selectedState, setSelectedState] = useState('');
   const [selectedCity, setSelectedCity] = useState('');
+  const [selectedType, setSelectedType] = useState('all');
 
   useEffect(() => {
-    // Get unique states from store locations
-    const stateList = [...new Set(storeLocations.map(item => item.state))];
+    // Get states from cityStateMap
+    const stateList = Object.keys(storeData.cityStateMap);
     setStates(stateList);
     
     if (stateList.length > 0) {
-      setSelectedState(stateList[0]);
+      if (stateList.includes('Delhi')) {
+        setSelectedState('Delhi');
+      } else {
+        setSelectedState(stateList[0]);
+      }
     }
-  }, []);
+  }, [storeData]);
 
   useEffect(() => {
     if (selectedState) {
       // Get cities for selected state
-      const cityList = [...new Set(storeLocations
-        .filter(item => item.state === selectedState)
-        .map(item => item.city))];
+      const cityList = Object.keys(storeData.cityStateMap[selectedState] || {});
       setCities(cityList);
       
-      // Set initial city
       if (cityList.length > 0) {
-        setSelectedCity(cityList[0]);
+        if (selectedState === 'Delhi' && cityList.includes('New Delhi')) {
+          setSelectedCity('New Delhi');
+        } else {
+          setSelectedCity(cityList[0]);
+        }
       }
     }
-  }, [selectedState]);
+  }, [selectedState, storeData]);
 
   useEffect(() => {
-    if (selectedCity) {
+    if (selectedState && selectedCity) {
       // Get stores for selected city
-      const storeList = storeLocations.filter(item => item.city === selectedCity);
-      setStores(storeList);
+      const storeList = storeData.cityStateMap[selectedState][selectedCity] || [];
+      
+      // Filter by type if selected
+      const filteredStores = selectedType === 'all' 
+        ? storeList 
+        : storeList.filter(store => store.type === selectedType);
+      
+      setStores(filteredStores);
     }
-  }, [selectedCity]);
-
-  const handleStateChange = (e) => {
-    const newState = e.target.value;
-    setSelectedState(newState);
-    setSelectedCity('');
-    setStores([]);
-  };
-
-  const handleCityChange = (e) => {
-    const newCity = e.target.value;
-    setSelectedCity(newCity);
-  };
+  }, [selectedCity, selectedState, selectedType, storeData]);
 
   const mapContainerStyle = {
     width: '100%',
-    height: '400px'
+    height: '600px'
   };
 
   const center = stores.length > 0 ? {
@@ -70,50 +69,67 @@ const StoreLocator = () => {
   };
 
   return (
-    <div className="flex flex-col">
-      <div className="flex w-1/3 p-4 bg-gray-100">
-        <select 
-          value={selectedState} 
-          onChange={handleStateChange} 
-          className="w-full mb-4 p-2 border rounded bg-black text-white"
-        >
-          <option value="">Select a state</option>
-          {states.map(state => (
-            <option key={state} value={state}>{state}</option>
-          ))}
-        </select>
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white shadow-sm p-4">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4">
+          <select 
+            value={selectedState} 
+            onChange={(e) => setSelectedState(e.target.value)} 
+            className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-black"
+          >
+            <option value="">Select State</option>
+            {states.map(state => (
+              <option key={state} value={state}>{state}</option>
+            ))}
+          </select>
 
-        <select 
-          value={selectedCity} 
-          onChange={handleCityChange} 
-          className="w-full mb-4 p-2 border rounded bg-black text-white"
-          disabled={!selectedState}
-        >
-          <option value="">Select a city</option>
-          {cities.map(city => (
-            <option key={city} value={city}>{city}</option>
-          ))}
-        </select>
+          <select 
+            value={selectedCity} 
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-black"
+            disabled={!selectedState}
+          >
+            <option value="">Select City</option>
+            {cities.map(city => (
+              <option key={city} value={city}>{city}</option>
+            ))}
+          </select>
+
+          <select
+            value={selectedType}
+            onChange={(e) => setSelectedType(e.target.value)}
+            className="flex-1 p-2 border rounded-lg focus:ring-2 focus:ring-black"
+          >
+            <option value="all">All Locations</option>
+            <option value="Sales">Sales Only</option>
+            <option value="Service">Service Only</option>
+          </select>
+        </div>
       </div>
 
-      <div className="flex">
-
-        <div className="w-1/3 p-4 overflow-y-auto">
-          {stores.map(store => (
-            <StoreCard key={store.id} store={store} />
+      <div className="max-w-7xl mx-auto mt-6 grid grid-cols-1 md:grid-cols-3 gap-6 p-4">
+        {/* Store List */}
+        <div className="md:col-span-1 space-y-4 h-[600px] overflow-y-auto">
+          {stores.map((store) => (
+            <StoreCard key={store.dealerId} store={store} />
           ))}
+          {stores.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              No stores found in this location
+            </div>
+          )}
         </div>
-        
-        <div className="w-2/3 p-4">
-          <LoadScript googleMapsApiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY}>
+
+        <div className="md:col-span-2">
+          <LoadScript googleMapsApiKey={import.meta.env.REACT_APP_GOOGLE_MAPS_API_KEY}>
             <GoogleMap
               mapContainerStyle={mapContainerStyle}
               center={center}
-              zoom={8}
+              zoom={12}
             >
-              {stores.map(store => (
+              {stores.map((store) => (
                 <Marker
-                  key={store.id}
+                  key={store.dealerId}
                   position={{
                     lat: parseFloat(store.latitude),
                     lng: parseFloat(store.longitude)
@@ -128,5 +144,6 @@ const StoreLocator = () => {
     </div>
   );
 };
+
 
 export default StoreLocator;
