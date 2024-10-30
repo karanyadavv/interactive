@@ -1,8 +1,14 @@
-# React + Vite
+## Store Locater
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Getting Started
 
-Currently, two official plugins are available:
+1.  Clone the repository:  `git clone https://github.com/yourusername/lotion.git`
+2.  Install dependencies:  `npm install`
+3.  Configure environment variables for Google Maps API 
+4.  Start the development server:  `npm run dev`
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Future Improvment
+
+ - [ ] Show stores based on user's location
+ - [ ] Fetch data based on user's viewport
+ - [ ] Use Rest or GraphQL to optimize API fetching
